@@ -16,6 +16,7 @@ export default function Die(props){
     if(props.value===5){face="fifth"}
     if(props.value===6){face="sixth"}
 
+
     let die 
     if(face==='first'){die= 
  <div onClick={(e)=>props.changeKeep(e, props.id)} className={`die  ${face + '-face'}`}  style={style}>

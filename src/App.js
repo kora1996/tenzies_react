@@ -8,6 +8,22 @@ export default function App(){
     const [dice, setDice] = React.useState(allNewDice())
     const [tenzies, setTenzies] = React.useState(false)
     const[rollNum, setRollNum] = React.useState(0)
+    const [time, setTime]= React.useState(0)
+    const [start, setStart]= React.useState(false)
+
+    // React.useEffect(()=>{
+    //     setTime(console.time('gameStart'))
+    // },[start])
+
+    // if(start){setTime(console.time('gameStart'))}
+
+    React.useEffect(()=>{
+        if(start===true){
+            const interval = setInterval(()=>{
+            setTime(seconds=>seconds+1)
+        },1000)
+    }
+    }, [])
 
     React.useEffect(()=>{
     const allKeep = dice.every(die=>die.isKeep)
@@ -39,6 +55,12 @@ export default function App(){
             setTenzies(false)
             setRollNum(-1)
         }
+
+        // if(rollNum===0){ const current = setInterval(()=>{
+        //     setTime(seconds=>seconds+1)
+        // }, 1000)
+        // }
+
         setDice(prevState=>prevState.map(die=>die.isKeep?die:newDie()))
         countRollNum()
     }
@@ -49,6 +71,8 @@ export default function App(){
 
     function changeKeep(e, id){
         setDice(prevState=>prevState.map(die=>die.id===id?{...die, isKeep:!die.isKeep}:die))
+
+        // if(start===false){setStart(true)}
     }
 
     function countRollNum(){
@@ -59,13 +83,18 @@ export default function App(){
         setDice(allNewDice)
         setTenzies(false)
         setRollNum(0)
+        setTime(0)
     }
+
+    let currentTime = time
+
 
     const dices = dice.map(die=><Die changeKeep={changeKeep} key={die.id} value={die.value} id={die.id} isKeep={die.isKeep}/>)
 
     return(
         <div className="app">
             {tenzies&&<Confetti />}
+           <h3> Your time is :{currentTime}</h3>
                 <h3 className='nor'>Number of Rolls: {rollNum}</h3>
             <div className="container">
                 {dices}
