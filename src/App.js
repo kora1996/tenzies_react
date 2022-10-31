@@ -11,30 +11,39 @@ export default function App(){
     const [time, setTime]= React.useState(0)
     const [start, setStart]= React.useState(false)
 
-    // React.useEffect(()=>{
-    //     setTime(console.time('gameStart'))
-    // },[start])
 
-    // if(start){setTime(console.time('gameStart'))}
-
+    
     React.useEffect(()=>{
-        if(start===true){
-            const interval = setInterval(()=>{
-            setTime(seconds=>seconds+1)
-        },1000)
-    }
-    }, [])
-
-    React.useEffect(()=>{
-    const allKeep = dice.every(die=>die.isKeep)
-    const firstValue = dice[0].value
-    const allSameValue = dice.every(die=>die.value===firstValue)
-    if (allKeep&&allSameValue) {
-        setTenzies(true)
-        console.log("You won!");
-    }
+        const allKeep = dice.every(die=>die.isKeep)
+        const firstValue = dice[0].value
+        const allSameValue = dice.every(die=>die.value===firstValue)
+        if (allKeep&&allSameValue) {
+            setTenzies(true)
+            setStart(false)
+            console.log("You won!");
+        }
     }
     ,[dice])
+
+    let interval
+
+
+    
+    // interval func main part
+    React.useEffect(()=>{
+        console.log(start)
+        if(start===false){return}
+        interval = setInterval(()=>{
+        setTime(seconds=>seconds+1)
+    },1000)
+    console.log(time)
+
+            return ()=>{
+                console.log('done'+time)
+            clearInterval(interval)
+            }
+    }, [start])
+
 
     function newDie(){
        return {id:nanoid(), value:randomNum() , isKeep:false}
@@ -54,12 +63,20 @@ export default function App(){
             setDice(allNewDice)
             setTenzies(false)
             setRollNum(-1)
+            setTime(0)
         }
 
         // if(rollNum===0){ const current = setInterval(()=>{
         //     setTime(seconds=>seconds+1)
         // }, 1000)
         // }
+        if(rollNum===0){ setStart(true)}
+
+    // if(rollNum===1&&start===true){
+    //     interval = setInterval(()=>{
+    //     setTime(seconds=>seconds+1)
+    // },1000)}
+
 
         setDice(prevState=>prevState.map(die=>die.isKeep?die:newDie()))
         countRollNum()
