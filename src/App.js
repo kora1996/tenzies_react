@@ -10,7 +10,8 @@ export default function App(){
     const[rollNum, setRollNum] = React.useState(0)
     const [time, setTime]= React.useState(0)
     const [start, setStart]= React.useState(false)
-
+    const [bestTime, setBestTime] = React.useState(JSON.parse(localStorage.getItem('bestTime'))||null)
+    const [hasScore, setHasScore] = React.useState(false)
 
     
     React.useEffect(()=>{
@@ -21,29 +22,36 @@ export default function App(){
             setTenzies(true)
             setStart(false)
             console.log("You won!");
+
+            if(bestTime===null||bestTime>time){
+                localStorage.setItem('bestTime', JSON.stringify(time))
+                setBestTime(time)
+                setHasScore(true)
+            }
         }
     }
     ,[dice])
 
-    let interval
 
+    // let scoreDom
+    React.useEffect(()=>{
+        if(bestTime){
+            setHasScore(true)
+        }
+    }, [])
 
     
     // interval func main part
     React.useEffect(()=>{
-        console.log(start)
         if(start===false){return}
-        interval = setInterval(()=>{
+        const interval = setInterval(()=>{
         setTime(seconds=>seconds+1)
     },1000)
-    console.log(time)
 
             return ()=>{
-                console.log('done'+time)
             clearInterval(interval)
             }
     }, [start])
-
 
     function newDie(){
        return {id:nanoid(), value:randomNum() , isKeep:false}
@@ -101,6 +109,7 @@ export default function App(){
         setTenzies(false)
         setRollNum(0)
         setTime(0)
+        setStart(false)
     }
 
     let currentTime = time
@@ -111,6 +120,7 @@ export default function App(){
     return(
         <div className="app">
             {tenzies&&<Confetti />}
+           {  hasScore&&<h3>The best time is : {bestTime}</h3> }
            <h3> Your time is :{currentTime}</h3>
                 <h3 className='nor'>Number of Rolls: {rollNum}</h3>
             <div className="container">
